@@ -1,3 +1,7 @@
 .text-field {
+    -fx-font-size: 20px;
+}
 
+.text {
+    -fx-font-size: 20px;
 }

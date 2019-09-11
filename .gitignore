@@ -1,3 +1,4 @@
 .idea/
 out/production/
 lib/
+rebuild.cmd

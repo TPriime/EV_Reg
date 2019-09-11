@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Rectangle?>
+
+<VBox spacing="40.0" xmlns="http://javafx.com/javafx/8.0.999-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.prime.ev.register.gui.Controller">
+   <children>
+      <HBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" spacing="50.0">
+         <children>
+            <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="300.0" spacing="40.0" HBox.hgrow="ALWAYS">
+               <children>
+                  <VBox spacing="15.0">
+                     <children>
+                        <HBox spacing="10.0">
+                           <children>
+                              <VBox>
+                                 <children>
+                                    <Label fx:id="nameLabel" text="Name" visible="false" />
+                                    <TextField fx:id="nameField" minWidth="-Infinity" prefWidth="200.0" promptText="Name" />
+                                 </children>
+                              </VBox>
+                              <VBox>
+                                 <children>
+                                    <Label fx:id="otherLabel" text="Other" visible="false" />
+                                    <TextField fx:id="otherField" minWidth="-Infinity" prefWidth="200.0" promptText="Other" />
+                                 </children>
+                              </VBox>
+                              <VBox>
+                                 <HBox.margin>
+                                    <Insets />
+                                 </HBox.margin>
+                                 <children>
+                                    <Label fx:id="surnameLabel" text="Surname" visible="false" />
+                                    <TextField fx:id="surnameField" minWidth="-Infinity" prefWidth="200.0" promptText="Surname" />
+                                 </children>
+                              </VBox>
+                           </children>
+                        </HBox>
+                        <HBox alignment="CENTER_LEFT" spacing="30.0">
+                           <children>
+                              <Label text="Gender" />
+                              <RadioButton mnemonicParsing="false" text="Male" />
+                              <RadioButton mnemonicParsing="false" text="Female" />
+                           </children>
+                        </HBox>
+                        <DatePicker fx:id="birthDate" promptText="Date of Birth" />
+                     </children>
+                     <VBox.margin>
+                        <Insets />
+                     </VBox.margin>
+                  </VBox>
+                  <VBox>
+                     <VBox.margin>
+                        <Insets />
+                     </VBox.margin>
+                     <children>
+                        <VBox>
+                           <children>
+                              <Label fx:id="emailLabel" text="Email" visible="false" />
+                              <TextField fx:id="emailField" maxWidth="-Infinity" prefWidth="300.0" promptText="Email" />
+                           </children>
+                        </VBox>
+                        <VBox>
+                           <children>
+                              <Label fx:id="phoneLabel" text="Phone" visible="false" />
+                              <TextField fx:id="phoneField" maxWidth="-Infinity" prefWidth="300.0" promptText="Phone" />
+                           </children>
+                        </VBox>
+                        <VBox>
+                           <children>
+                              <Label fx:id="occupationLabel" text="Occupation" visible="false" />
+                              <TextField fx:id="occupationField" promptText="Occupation" />
+                           </children>
+                        </VBox>
+                     </children>
+                     <padding>
+                        <Insets bottom="20.0" />
+                     </padding>
+                  </VBox>
+                  <VBox spacing="20.0">
+                     <VBox.margin>
+                        <Insets />
+                     </VBox.margin>
+                     <children>
+                        <HBox alignment="CENTER_LEFT" spacing="30.0">
+                           <children>
+                              <Label text="State" />
+                              <ComboBox prefWidth="150.0" promptText="State" />
+                           </children>
+                        </HBox>
+                        <HBox alignment="CENTER_LEFT" spacing="37.0">
+                           <children>
+                              <Label text="LGA" />
+                              <ComboBox prefWidth="150.0" promptText="LGA" />
+                           </children>
+                        </HBox>
+                        <HBox alignment="CENTER_LEFT">
+                           <children>
+                              <ChoiceBox prefWidth="150.0" />
+                           </children>
+                        </HBox>
+                     </children>
+                  </VBox>
+               </children>
+            </VBox>
+            <Separator orientation="VERTICAL" prefHeight="200.0" />
+            <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" spacing="10.0" HBox.hgrow="ALWAYS">
+               <children>
+                  <StackPane style="-fx-border-width: 10;">
+                     <children>
+                        <ImageView fitHeight="300.0" fitWidth="350.0" pickOnBounds="true" VBox.vgrow="NEVER">
+                           <image>
+                              <Image url="@../../../../../../../../Desktop/bb/image.jpg" />
+                           </image>
+                        </ImageView>
+                        <Rectangle arcHeight="5.0" arcWidth="5.0" fill="TRANSPARENT" height="300.0" stroke="BLACK" strokeType="INSIDE" width="350.0" />
+                     </children>
+                  </StackPane>
+                  <Button mnemonicParsing="false" text="Capture" />
+                  <Separator prefWidth="200.0" />
+                  <fx:include source="fingerCaptureView.fxml" />
+               </children>
+            </VBox>
+         </children>
+      </HBox>
+      <StackPane>
+         <children>
+            <Button mnemonicParsing="false" text="Register" />
+         </children>
+      </StackPane>
+   </children>
+   <padding>
+      <Insets bottom="30.0" left="30.0" right="30.0" top="30.0" />
+   </padding>
+</VBox>
