@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.*?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ChoiceBox?>
@@ -9,18 +15,20 @@
 <?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.Rectangle?>
 
-<VBox spacing="40.0" xmlns="http://javafx.com/javafx/8.0.999-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.prime.ev.register.gui.Controller">
+<VBox spacing="40.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.prime.ev.register.gui.Controller">
    <children>
       <HBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" spacing="50.0">
          <children>
-            <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="300.0" spacing="40.0" HBox.hgrow="ALWAYS">
+            <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="300.0" spacing="60.0" HBox.hgrow="ALWAYS">
                <children>
                   <VBox spacing="15.0">
                      <children>
@@ -28,13 +36,13 @@
                            <children>
                               <VBox>
                                  <children>
-                                    <Label fx:id="nameLabel" text="Name" visible="false" />
+                                    <Label fx:id="nameLabel" text="Name" />
                                     <TextField fx:id="nameField" minWidth="-Infinity" prefWidth="200.0" promptText="Name" />
                                  </children>
                               </VBox>
                               <VBox>
                                  <children>
-                                    <Label fx:id="otherLabel" text="Other" visible="false" />
+                                    <Label fx:id="otherLabel" text="Other" />
                                     <TextField fx:id="otherField" minWidth="-Infinity" prefWidth="200.0" promptText="Other" />
                                  </children>
                               </VBox>
@@ -43,7 +51,7 @@
                                     <Insets />
                                  </HBox.margin>
                                  <children>
-                                    <Label fx:id="surnameLabel" text="Surname" visible="false" />
+                                    <Label fx:id="surnameLabel" text="Surname" />
                                     <TextField fx:id="surnameField" minWidth="-Infinity" prefWidth="200.0" promptText="Surname" />
                                  </children>
                               </VBox>
@@ -62,68 +70,57 @@
                         <Insets />
                      </VBox.margin>
                   </VBox>
-                  <VBox>
-                     <VBox.margin>
-                        <Insets />
-                     </VBox.margin>
+                  <GridPane minHeight="-Infinity" vgap="40.0">
+                    <columnConstraints>
+                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="302.0" minWidth="10.0" prefWidth="144.0" />
+                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="546.0" minWidth="10.0" prefWidth="476.0" />
+                    </columnConstraints>
+                    <rowConstraints>
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                    </rowConstraints>
                      <children>
-                        <VBox>
-                           <children>
-                              <Label fx:id="emailLabel" text="Email" visible="false" />
-                              <TextField fx:id="emailField" maxWidth="-Infinity" prefWidth="300.0" promptText="Email" />
-                           </children>
-                        </VBox>
-                        <VBox>
-                           <children>
-                              <Label fx:id="phoneLabel" text="Phone" visible="false" />
-                              <TextField fx:id="phoneField" maxWidth="-Infinity" prefWidth="300.0" promptText="Phone" />
-                           </children>
-                        </VBox>
-                        <VBox>
-                           <children>
-                              <Label fx:id="occupationLabel" text="Occupation" visible="false" />
-                              <TextField fx:id="occupationField" promptText="Occupation" />
-                           </children>
-                        </VBox>
+                        <Label fx:id="emailLabel" text="Email" />
+                        <TextField fx:id="emailField" maxWidth="-Infinity" prefWidth="300.0" promptText="Email" GridPane.columnIndex="1" />
+                        <Label fx:id="phoneLabel" text="Phone" GridPane.rowIndex="1" />
+                        <TextField fx:id="phoneField" maxWidth="-Infinity" prefWidth="300.0" promptText="Phone" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        <Label fx:id="occupationLabel" text="Occupation" GridPane.rowIndex="2" />
+                        <TextField fx:id="occupationField" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="31.0" prefWidth="300.0" promptText="Occupation" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                        <Label text="Marital Status" GridPane.rowIndex="3" />
+                        <TextField maxWidth="-Infinity" minWidth="-Infinity" prefWidth="300.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                      </children>
-                     <padding>
-                        <Insets bottom="20.0" />
-                     </padding>
-                  </VBox>
-                  <VBox spacing="20.0">
-                     <VBox.margin>
-                        <Insets />
-                     </VBox.margin>
+                  </GridPane>
+                  <GridPane minHeight="-Infinity" vgap="40.0">
+                    <columnConstraints>
+                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="302.0" minWidth="10.0" prefWidth="144.0" />
+                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="494.0" minWidth="10.0" prefWidth="476.0" />
+                    </columnConstraints>
+                    <rowConstraints>
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                    </rowConstraints>
                      <children>
-                        <HBox alignment="CENTER_LEFT" spacing="30.0">
-                           <children>
-                              <Label text="State" />
-                              <ComboBox prefWidth="150.0" promptText="State" />
-                           </children>
-                        </HBox>
-                        <HBox alignment="CENTER_LEFT" spacing="37.0">
-                           <children>
-                              <Label text="LGA" />
-                              <ComboBox prefWidth="150.0" promptText="LGA" />
-                           </children>
-                        </HBox>
-                        <HBox alignment="CENTER_LEFT">
-                           <children>
-                              <ChoiceBox prefWidth="150.0" />
-                           </children>
-                        </HBox>
+                        <Label text="State" />
+                        <ComboBox prefWidth="150.0" promptText="State" GridPane.columnIndex="1" />
+                        <Label text="LGA" GridPane.rowIndex="1" />
+                        <ComboBox prefWidth="150.0" promptText="LGA" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        <ChoiceBox prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                        <Label text="Town" GridPane.rowIndex="2" />
                      </children>
-                  </VBox>
+                  </GridPane>
                </children>
             </VBox>
             <Separator orientation="VERTICAL" prefHeight="200.0" />
-            <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" spacing="10.0" HBox.hgrow="ALWAYS">
+            <VBox alignment="TOP_CENTER" prefWidth="100.0" spacing="10.0" HBox.hgrow="ALWAYS">
                <children>
                   <StackPane style="-fx-border-width: 10;">
                      <children>
                         <ImageView fitHeight="300.0" fitWidth="350.0" pickOnBounds="true" VBox.vgrow="NEVER">
                            <image>
-                              <Image url="@../../../../../../../../Desktop/bb/image.jpg" />
+
                            </image>
                         </ImageView>
                         <Rectangle arcHeight="5.0" arcWidth="5.0" fill="TRANSPARENT" height="300.0" stroke="BLACK" strokeType="INSIDE" width="350.0" />

@@ -16,7 +16,7 @@ import java.util.ResourceBundle;
 public class Controller implements Initializable {
     public TextField nameField, otherField, surnameField, emailField, phoneField, occupationField;
 
-
+    /*
     private class FieldListener implements ChangeListener<Boolean> {
         TextField textField;
         String assocLabel;
@@ -32,13 +32,13 @@ public class Controller implements Initializable {
             textField.getParent().lookup(assocLabel).setVisible(newB);
         }
     }
-
+    */
 
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         List<TextField> fields = List.of(nameField, otherField, surnameField, emailField, phoneField, occupationField);
-        for(TextField textField: fields) new FieldListener(textField);
+        //for(TextField textField: fields) new FieldListener(textField);
     }
 
 
