@@ -1,14 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.image.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.shape.*?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
@@ -24,7 +17,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.Rectangle?>
 
-<VBox spacing="40.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.prime.ev.register.gui.Controller">
+<VBox spacing="40.0" xmlns="http://javafx.com/javafx/8.0.999-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.prime.ev.register.gui.Controller">
    <children>
       <HBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" spacing="50.0">
          <children>
@@ -37,13 +30,13 @@
                               <VBox>
                                  <children>
                                     <Label fx:id="nameLabel" text="Name" />
-                                    <TextField fx:id="nameField" minWidth="-Infinity" prefWidth="200.0" promptText="Name" />
+                                    <TextField fx:id="firstNameField" minWidth="-Infinity" prefWidth="200.0" promptText="Name" />
                                  </children>
                               </VBox>
                               <VBox>
                                  <children>
                                     <Label fx:id="otherLabel" text="Other" />
-                                    <TextField fx:id="otherField" minWidth="-Infinity" prefWidth="200.0" promptText="Other" />
+                                    <TextField fx:id="otherNamesField" minWidth="-Infinity" prefWidth="200.0" promptText="Other" />
                                  </children>
                               </VBox>
                               <VBox>
@@ -52,7 +45,7 @@
                                  </HBox.margin>
                                  <children>
                                     <Label fx:id="surnameLabel" text="Surname" />
-                                    <TextField fx:id="surnameField" minWidth="-Infinity" prefWidth="200.0" promptText="Surname" />
+                                    <TextField fx:id="lastNameField" minWidth="-Infinity" prefWidth="200.0" promptText="Surname" />
                                  </children>
                               </VBox>
                            </children>
@@ -60,17 +53,17 @@
                         <HBox alignment="CENTER_LEFT" spacing="30.0">
                            <children>
                               <Label text="Gender" />
-                              <RadioButton mnemonicParsing="false" text="Male" />
-                              <RadioButton mnemonicParsing="false" text="Female" />
+                              <RadioButton fx:id="maleButton" mnemonicParsing="false" selected="true" text="Male" />
+                              <RadioButton fx:id="femaleButton" mnemonicParsing="false" text="Female" />
                            </children>
                         </HBox>
-                        <DatePicker fx:id="birthDate" promptText="Date of Birth" />
+                        <DatePicker fx:id="dateOfBirth" promptText="Date of Birth" />
                      </children>
                      <VBox.margin>
                         <Insets />
                      </VBox.margin>
                   </VBox>
-                  <GridPane minHeight="-Infinity" vgap="40.0">
+                  <GridPane minHeight="-Infinity" vgap="35.0">
                     <columnConstraints>
                       <ColumnConstraints hgrow="SOMETIMES" maxWidth="302.0" minWidth="10.0" prefWidth="144.0" />
                       <ColumnConstraints hgrow="SOMETIMES" maxWidth="546.0" minWidth="10.0" prefWidth="476.0" />
@@ -83,16 +76,21 @@
                     </rowConstraints>
                      <children>
                         <Label fx:id="emailLabel" text="Email" />
-                        <TextField fx:id="emailField" maxWidth="-Infinity" prefWidth="300.0" promptText="Email" GridPane.columnIndex="1" />
+                        <TextField fx:id="userEmailField" maxWidth="-Infinity" prefWidth="300.0" promptText="Email" GridPane.columnIndex="1" />
                         <Label fx:id="phoneLabel" text="Phone" GridPane.rowIndex="1" />
-                        <TextField fx:id="phoneField" maxWidth="-Infinity" prefWidth="300.0" promptText="Phone" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        <TextField fx:id="phoneNumberField" maxWidth="-Infinity" prefWidth="300.0" promptText="Phone" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                         <Label fx:id="occupationLabel" text="Occupation" GridPane.rowIndex="2" />
                         <TextField fx:id="occupationField" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="31.0" prefWidth="300.0" promptText="Occupation" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                         <Label text="Marital Status" GridPane.rowIndex="3" />
-                        <TextField maxWidth="-Infinity" minWidth="-Infinity" prefWidth="300.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                        <HBox prefHeight="100.0" prefWidth="200.0" spacing="30.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                           <children>
+                              <RadioButton fx:id="singleButton" mnemonicParsing="false" selected="true" text="Single" />
+                              <RadioButton fx:id="marriedButton" mnemonicParsing="false" text="Married" />
+                           </children>
+                        </HBox>
                      </children>
                   </GridPane>
-                  <GridPane minHeight="-Infinity" vgap="40.0">
+                  <GridPane minHeight="-Infinity" vgap="35.0">
                     <columnConstraints>
                       <ColumnConstraints hgrow="SOMETIMES" maxWidth="302.0" minWidth="10.0" prefWidth="144.0" />
                       <ColumnConstraints hgrow="SOMETIMES" maxWidth="494.0" minWidth="10.0" prefWidth="476.0" />
@@ -104,11 +102,11 @@
                     </rowConstraints>
                      <children>
                         <Label text="State" />
-                        <ComboBox prefWidth="150.0" promptText="State" GridPane.columnIndex="1" />
+                        <ComboBox fx:id="state" prefWidth="150.0" promptText="State" GridPane.columnIndex="1" />
                         <Label text="LGA" GridPane.rowIndex="1" />
-                        <ComboBox prefWidth="150.0" promptText="LGA" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                        <ChoiceBox prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                        <ComboBox fx:id="lga" prefWidth="150.0" promptText="LGA" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                         <Label text="Town" GridPane.rowIndex="2" />
+                        <ComboBox fx:id="town" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                      </children>
                   </GridPane>
                </children>
@@ -118,7 +116,7 @@
                <children>
                   <StackPane style="-fx-border-width: 10;">
                      <children>
-                        <ImageView fitHeight="300.0" fitWidth="350.0" pickOnBounds="true" VBox.vgrow="NEVER">
+                        <ImageView fx:id="userProfilePicture" fitHeight="300.0" fitWidth="350.0" pickOnBounds="true" VBox.vgrow="NEVER">
                            <image>
 
                            </image>
@@ -135,7 +133,7 @@
       </HBox>
       <StackPane>
          <children>
-            <Button mnemonicParsing="false" text="Register" />
+            <Button mnemonicParsing="false" onAction="#register" text="Register" />
          </children>
       </StackPane>
    </children>

@@ -1,5 +1,6 @@
 package com.prime.ev.register.gui;
 
+import com.prime.ev.register.Factory;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
