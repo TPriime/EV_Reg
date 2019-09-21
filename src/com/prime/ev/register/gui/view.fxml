@@ -57,7 +57,12 @@
                               <RadioButton fx:id="femaleButton" mnemonicParsing="false" text="Female" />
                            </children>
                         </HBox>
-                        <DatePicker fx:id="dateOfBirth" promptText="Date of Birth" />
+                        <HBox alignment="CENTER_LEFT" spacing="45.0">
+                           <children>
+                              <Label text="Date Of Birth" />
+                              <DatePicker fx:id="dateOfBirth" promptText="Date of Birth" />
+                           </children>
+                        </HBox>
                      </children>
                      <VBox.margin>
                         <Insets />

@@ -11,9 +11,19 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 
+import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
+import javax.imageio.stream.ImageInputStream;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.net.URL;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -28,6 +38,7 @@ public class Controller implements Initializable {
     public RadioButton maleButton, femaleButton, singleButton, marriedButton;
     public ComboBox<String> state, lga, town;
     public DatePicker dateOfBirth;
+    public ImageView userProfilePicture;
 
 
     /*
@@ -58,7 +69,7 @@ public class Controller implements Initializable {
 
             @Override public void onUserRegistered(String response) {
                 System.out.println("user registered");
-                System.out.println(response);
+                System.out.println("response: "+response);
                 cleanUp();
             }
 
@@ -110,13 +121,23 @@ public class Controller implements Initializable {
             details.put("maritalStatus", maritalButton.getText());
 
             details.put(dateOfBirth.getId(), dateOfBirth.getValue().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
-            //////////////////////
+
+
+
+            /////////////////////
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            FileInputStream f  = new FileInputStream(getClass().getResource("pic2.jpg").getFile());
+            ImageIO.write(ImageIO.read(f), "jpg", bos);
+
             details.putAll(Map.of("fingerprint", "2a2abb34fe23390ae",
                     "userID", "11111111",
-                    "profilePicture", "[2,3,12,23,44,343,2]",
+                    "userProfilePicture", new String(bos.toByteArray()),//new String(new byte[]{2,3,12,23,44,34,2}),
                     "profilePictureId", "24424343"));
             //////////////////////
+
+
             Factory.register(details);
+
         } catch(NullPointerException npe){
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Incomplete details");
