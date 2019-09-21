@@ -77,25 +77,47 @@ public class Controller implements Initializable {
 
             }
         };
-
         Factory.getListeners().add(listener);
 
-        state.setItems(getData(STATE));
-        lga.setItems(getData(LGA));
-        town.setItems(getData(TOWN));
+        try {
+            state.setItems(getData(STATE, null));
+        } catch (java.sql.SQLException sqle){
+            System.out.println(sqle.getClass().getName()+": "+ sqle.getMessage());
+            System.out.println("Unable to populate State ComboBox items");
+            System.exit(1);
+        }
 
         maleButton.setToggleGroup(genderGroup);
         femaleButton.setToggleGroup(genderGroup);
         singleButton.setToggleGroup(marriedStatusGroup);
         marriedButton.setToggleGroup(marriedStatusGroup);
+
+        setListenersForComboBoxes();
     }
 
 
-    private ObservableList<String> getData(int value){
-        ObservableList<String> ob = FXCollections.observableArrayList("First", "Second", "Third");
-        if(value == STATE) return ob;
-        else if(value == LGA) return ob;
-        else if(value == TOWN) return ob;
+    private void setListenersForComboBoxes(){
+        state.getSelectionModel().selectedItemProperty().addListener((options, oldValue, newValue)->{
+            try{
+                lga.setItems(getData(LGA, newValue));
+                lga.setValue(lga.getItems().get(0));
+            }catch(java.sql.SQLException e){e.printStackTrace();}
+        });
+
+        lga.getSelectionModel().selectedItemProperty().addListener((options, oldValue, newValue)->{
+            try{
+                town.setItems(getData(TOWN, newValue));
+                town.setValue(town.getItems().get(0));
+            }catch(java.sql.SQLException e){e.printStackTrace();}
+        });
+    }
+
+
+
+    private ObservableList<String> getData(int value, String matchString) throws java.sql.SQLException{
+        if(value == STATE) return FXCollections.observableArrayList(Factory.getStates());
+        else if(value == LGA) return FXCollections.observableArrayList(Factory.getLGAs(matchString));
+        else if(value == TOWN) return FXCollections.observableArrayList(Factory.getTowns(matchString));
         return null;
     }
 
