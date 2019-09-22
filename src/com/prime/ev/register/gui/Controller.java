@@ -93,6 +93,8 @@ public class Controller implements Initializable {
         marriedButton.setToggleGroup(marriedStatusGroup);
 
         setListenersForComboBoxes();
+        //initialize state with first item
+        state.setValue(state.getItems().get(0));
     }
 
 

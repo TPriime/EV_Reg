@@ -9,9 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import com.google.gson.Gson;
 import com.prime.net.forms.MultipartForm;
-import javafx.collections.ObservableList;
 
 public class Factory{
     private static List<EventListener> listeners = new ArrayList<>();
@@ -57,6 +55,8 @@ public class Factory{
             stmt.executeUpdate("CREATE TABLE States(name CHAR(25) PRIMARY KEY)");
             stmt.executeUpdate("CREATE TABLE LGAs(name CHAR(25) PRIMARY KEY, state CHAR(25) NOT NULL)");
             stmt.executeUpdate("CREATE TABLE Towns(name CHAR(25) PRIMARY KEY, lga CHAR(25) NOT NULL)");
+
+            /*@debug*/
             for(int x=0; x<100; x++){
                 stmt.executeUpdate("INSERT INTO States VALUES('"+x+"')");
                 int inc = x*20;
@@ -67,9 +67,11 @@ public class Factory{
                         stmt.executeUpdate(String.format("INSERT INTO Towns VALUES('%d', '%d')", j, i));
                 }
             }
+            /*@debug*/
             System.out.println("Tables created");
         }
 
+        /*@debug*/
         System.out.println("----States----");
         rs = stmt.executeQuery("Select * from States");
         while(rs.next()) System.out.println(rs.getString("name"));
@@ -83,6 +85,7 @@ public class Factory{
         System.out.println("----Towns----");
         rs = stmt.executeQuery("Select * from Towns");
         while(rs.next()) System.out.println(rs.getString("name") + "  " + rs.getString("lga"));
+        /*@debug*/
     }
 
 
