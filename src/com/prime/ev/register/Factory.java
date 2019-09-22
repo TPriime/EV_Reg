@@ -67,12 +67,13 @@ public class Factory{
                         stmt.executeUpdate(String.format("INSERT INTO Towns VALUES('%d', '%d')", j, i));
                 }
             }
+            //conn.commit();
             /*@debug*/
             System.out.println("Tables created");
         }
 
         /*@debug*/
-        System.out.println("----States----");
+        /*System.out.println("----States----");
         rs = stmt.executeQuery("Select * from States");
         while(rs.next()) System.out.println(rs.getString("name"));
 
@@ -84,7 +85,7 @@ public class Factory{
 
         System.out.println("----Towns----");
         rs = stmt.executeQuery("Select * from Towns");
-        while(rs.next()) System.out.println(rs.getString("name") + "  " + rs.getString("lga"));
+        while(rs.next()) System.out.println(rs.getString("name") + "  " + rs.getString("lga"));*/
         /*@debug*/
     }
 
@@ -108,7 +109,6 @@ public class Factory{
     }
 
 
-
     public static List<String> getTowns(String lga) throws SQLException{
         Statement stmt = conn.createStatement();
         ResultSet rs = stmt.executeQuery("Select * from Towns WHERE lga='"+lga+"'");
@@ -118,13 +118,10 @@ public class Factory{
     }
 
 
-
     public static List<Factory.EventListener> getListeners(){ return listeners;}
 
 
     public static void register(Map<String, String> userDetails) throws java.io.IOException{
-        /*@debug*/ userDetails.forEach((s1, s2)-> System.out.println(s1 + " - " + s2));
-
         HttpURLConnection http = (HttpURLConnection) new URL(ELECTION_REG_API).openConnection();
         http.setRequestMethod("POST");
         http.setRequestProperty("User-Agent", "Mozilla/5.0");

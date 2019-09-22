@@ -115,12 +115,12 @@ public class Controller implements Initializable {
     }
 
 
-
     private ObservableList<String> getData(int value, String matchString) throws java.sql.SQLException{
         if(value == STATE) return FXCollections.observableArrayList(Factory.getStates());
         else if(value == LGA) return FXCollections.observableArrayList(Factory.getLGAs(matchString));
         else if(value == TOWN) return FXCollections.observableArrayList(Factory.getTowns(matchString));
-        return null;
+        throw new IllegalArgumentException(String.format("value argument must be one of %s.STATE, %s.LGA or %s.TOWN", getClass().getSimpleName(),
+                getClass().getSimpleName(), getClass().getSimpleName()));
     }
 
 
@@ -160,6 +160,7 @@ public class Controller implements Initializable {
             //////////////////////
 
 
+            //*@debug*/ details.forEach((s1, s2)-> System.out.println(s1 + " - " + s2));
             Factory.register(details);
 
         } catch(NullPointerException npe){
