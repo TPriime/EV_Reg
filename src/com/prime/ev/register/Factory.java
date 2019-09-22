@@ -17,6 +17,7 @@ public class Factory{
     //private static String ELECTION_REG_API = "http://127.0.0.1:8080";
     private static Connection conn;
 
+    private static final String x_access_token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7ImlkIjoiNWQ1ZTY0NjQzODdjODI3MmViNDdhNmEzIn0sImlhdCI6MTU2NjQ2NzI4NSwiZXhwIjoxNTY5MDU5Mjg1fQ.JNw0G7mcOHB1EJdEGfu8mdrrW-6-41SnloIy2sXWbPA";
 
 
     public interface EventListener{
@@ -125,6 +126,9 @@ public class Factory{
         HttpURLConnection http = (HttpURLConnection) new URL(ELECTION_REG_API).openConnection();
         http.setRequestMethod("POST");
         http.setRequestProperty("User-Agent", "Mozilla/5.0");
+        http.setRequestProperty("Content-Type", "application/json");
+        http.setRequestProperty("x-access-token", x_access_token);
+
         String boundary = "Prime'sBoundary";
         http.setRequestProperty("Content-Type", "multipart/form-data; boundary=\""+boundary+"\"");
         http.setDoOutput(true);
