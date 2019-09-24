@@ -1,6 +1,7 @@
 package com.prime.ev.register;
 
 import java.io.BufferedInputStream;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -9,15 +10,18 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import com.prime.ev.register.gui.Main;
 import com.prime.net.forms.MultipartForm;
 
 public class Factory{
+    public static final String HOST = "http://127.0.0.1:8080";
+
+    private static Main mainInstance;
     private static List<EventListener> listeners = new ArrayList<>();
-    private static String ELECTION_REG_API = "http://127.0.0.1:4050/" + "evoting_api/v1/users/register";
+    private static String ELECTION_REG_API = HOST + "/evoting_api/v1/users/register";
     //private static String ELECTION_REG_API = "http://127.0.0.1:8080";
     private static Connection conn;
-
-    private static final String x_access_token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7ImlkIjoiNWQ1ZTY0NjQzODdjODI3MmViNDdhNmEzIn0sImlhdCI6MTU2NjQ2NzI4NSwiZXhwIjoxNTY5MDU5Mjg1fQ.JNw0G7mcOHB1EJdEGfu8mdrrW-6-41SnloIy2sXWbPA";
+    private static String x_access_token = "";//"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7ImlkIjoiNWQ1ZTY0NjQzODdjODI3MmViNDdhNmEzIn0sImlhdCI6MTU2NjQ2NzI4NSwiZXhwIjoxNTY5MDU5Mjg1fQ.JNw0G7mcOHB1EJdEGfu8mdrrW-6-41SnloIy2sXWbPA";
 
 
     public interface EventListener{
@@ -91,6 +95,19 @@ public class Factory{
     }
 
 
+    public static void setX_access_token(String x_access_token){
+        Factory.x_access_token = x_access_token;
+    }
+
+
+    public static String getX_access_token(){ return x_access_token; }
+
+
+    public static void setMainInstance(Main main){ mainInstance = main; }
+
+
+    public static void setRegistrationScene()throws IOException {mainInstance.setRegistrationScene();}
+
 
     public static List<String> getStates() throws SQLException{
         Statement stmt = conn.createStatement();
@@ -122,7 +139,7 @@ public class Factory{
     public static List<Factory.EventListener> getListeners(){ return listeners;}
 
 
-    public static void register(Map<String, String> userDetails) throws java.io.IOException{
+    public static void register(Map<String, Object> userDetails) throws java.io.IOException{
         HttpURLConnection http = (HttpURLConnection) new URL(ELECTION_REG_API).openConnection();
         http.setRequestMethod("POST");
         http.setRequestProperty("User-Agent", "Mozilla/5.0");
@@ -135,19 +152,26 @@ public class Factory{
 
         OutputStream out = http.getOutputStream();
 
-        MultipartForm mpf = new MultipartForm(boundary);
+        MultipartForm mpf = new MultipartForm(boundary, out);
         userDetails.forEach((k, v)-> {
-            if(k.equals("userProfilePicture")) mpf.addInputFile(k, (userDetails.get("userEmail")+".png"), v.getBytes());
-            else mpf.addInput(k, v);
+            try{
+                if(k.equals("userProfilePicture")) {
+                    mpf.addInputFile(k, (userDetails.get("userEmail")+".png"), (byte[])v);
+                }
+                else mpf.addInput(k, (String)v);
+            } catch(IOException ioe){ioe.printStackTrace();}
         });
-        out.write(mpf.end().getBytes());
-        out.close();
+        mpf.end();
 
         final String[] response = {""};
         if(http.getResponseCode() == HttpURLConnection.HTTP_OK){
             response[0] = new String(new BufferedInputStream(http.getInputStream()).readAllBytes());
-        } else { response[0] = Integer.toString(http.getResponseCode()); /*@debug*/System.out.println("response msg: "+http.getResponseMessage());}
+            listeners.forEach(l -> l.onUserRegistered(response[0]));
+        } else {
+            response[0] = Integer.toString(http.getResponseCode());
+            /*@debug*/System.out.println("response code: " + http.getResponseCode() + "; response msg: " + http.getResponseMessage());
 
-        listeners.forEach(l -> l.onUserRegistered(response[0]));
+            listeners.forEach(l -> l.onUserRegistered("error"));
+        }
     }
 }

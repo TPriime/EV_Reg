@@ -29,7 +29,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 public class Controller implements Initializable {
-    private Map<String, String> details = new HashMap<>();
+    private Map<String, Object> details = new HashMap<>();
     private ToggleGroup genderGroup = new ToggleGroup(), marriedStatusGroup = new ToggleGroup();
     private final int STATE = 0, LGA = 1, TOWN = 2;
     private Node parent;
@@ -68,6 +68,11 @@ public class Controller implements Initializable {
             }
 
             @Override public void onUserRegistered(String response) {
+                if(response.equalsIgnoreCase("error")) {
+                    System.out.println("registration failed");
+                    return;
+                }
+
                 System.out.println("user registered");
                 System.out.println("response: "+response);
                 cleanUp();
@@ -153,9 +158,9 @@ public class Controller implements Initializable {
             FileInputStream f  = new FileInputStream(getClass().getResource("pic2.jpg").getFile());
             ImageIO.write(ImageIO.read(f), "jpg", bos);
 
-            details.putAll(Map.of("fingerprint", "2a2abb34fe23390ae",
-                    "userID", "11111111",
-                    "userProfilePicture", new String(bos.toByteArray()),//new String(new byte[]{2,3,12,23,44,34,2}),
+            details.putAll(Map.of("fingerprint", "",
+                    "userID", "12345",
+                    "userProfilePicture", bos.toByteArray(),//new String(new byte[]{2,3,12,23,44,34,2}),
                     "profilePictureId", "24424343"));
             //////////////////////
 
