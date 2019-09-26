@@ -16,6 +16,7 @@ import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Paint;
 import javafx.scene.text.Text;
 
 import javax.imageio.ImageIO;
@@ -24,6 +25,7 @@ import javax.imageio.stream.ImageInputStream;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.URL;
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
@@ -32,15 +34,18 @@ public class Controller implements Initializable {
     private ToggleGroup genderGroup = new ToggleGroup(), marriedStatusGroup = new ToggleGroup();
     private final int STATE = 0, LGA = 1, TOWN = 2;
     private Node parent;
-    private boolean isCapureModeOn = false;
+    private boolean isCaptureModeOn = false;
     private byte[] currentUserImageBytes;
+    private final long hideViewTimeout = 3000;
+    private final LocalDate defaultDate = LocalDate.of(1960, 10, 1);
+    private final Image defaultImage = new Image(getClass().getResource("default.jpg").toExternalForm());
 
     public TextField firstNameField, otherNamesField, lastNameField, userEmailField, phoneNumberField, occupationField;
     public RadioButton maleButton, femaleButton, singleButton, marriedButton;
     public ComboBox<String> state, lga, town;
     public DatePicker dateOfBirth;
     public ImageView userProfilePicture;
-
+    public Label registrationPrompt;
 
     /*
     private class FieldListener implements ChangeListener<Boolean> {
@@ -65,21 +70,12 @@ public class Controller implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         Factory.EventListener listener = new Factory.EventListener() {
             @Override public void onImageCaptured(byte[] image) {
-                isCapureModeOn = false;
-                currentUserImageBytes = image;
-                Platform.runLater(()->
-                    userProfilePicture.setImage(new Image(new ByteArrayInputStream(image))));
+                imageCaptured(image);
             }
 
-            @Override public void onUserRegistered(String response) {
-                if(response.equalsIgnoreCase("error")) {
-                    System.out.println("registration failed");
-                    return;
-                }
-
-                System.out.println("user registered");
-                System.out.println("response: "+response);
-                cleanUp();
+            @Override public void onRegister(String response) {
+                if(response.equalsIgnoreCase("Registration successful")) userRegistered(response);
+                else registrationFailed(response);
             }
 
             @Override public void onError() {
@@ -104,6 +100,8 @@ public class Controller implements Initializable {
         setListenersForComboBoxes();
         //initialize state with first item
         state.setValue(state.getItems().get(0));
+        dateOfBirth.setValue(defaultDate);
+        userProfilePicture.setImage(defaultImage);
     }
 
 
@@ -133,16 +131,58 @@ public class Controller implements Initializable {
     }
 
 
-    private void cleanUp(){
-        parent.lookupAll("TextField").forEach(t-> ((TextField)t).setText(""));
-        //parent.lookupAll("ComboBox").forEach(c -> ((ComboBox<String>)c))
+    private void setHideView(Node node, long timeOutMillis){
+        Platform.runLater(()->node.setVisible(true));
+        new Thread(()->{
+            try{Thread.sleep(timeOutMillis);}catch(Exception e){e.printStackTrace();}
+            Platform.runLater(()->node.setVisible(false));
+        }, "hideViewThread").start();
+    }
+
+
+    private void imageCaptured(byte[] image){
+        isCaptureModeOn = false;
+        currentUserImageBytes = image;
+        Platform.runLater(()->
+                userProfilePicture.setImage(new Image(new ByteArrayInputStream(image))));
+    }
+
+
+    private void registrationFailed(String errorMessage){
+        System.out.println("error: " + errorMessage);
+        Platform.runLater(()->{
+            registrationPrompt.setText(errorMessage+"!");
+            registrationPrompt.setTextFill(Paint.valueOf("red"));
+        });
+        setHideView(registrationPrompt,  hideViewTimeout);
+    }
+
+    private void userRegistered(String response) {
+        System.out.println(response);
+        Platform.runLater(()->{
+            registrationPrompt.setText(response+"!");
+            registrationPrompt.setTextFill(Paint.valueOf("green"));
+        });
+        setHideView(registrationPrompt, hideViewTimeout);
+        reset();
+    }
+
+
+    private void reset() {
+        currentUserImageBytes = null;
+        Platform.runLater(()->{
+            parent.lookupAll("TextField").forEach(t-> ((TextField)t).setText(""));
+            state.setValue(state.getItems().get(0));
+            userProfilePicture.setImage(defaultImage);
+            dateOfBirth.setValue(defaultDate);
+        });
     }
 
 
     public void capture() {
-        if(isCapureModeOn) Factory.captureImage();
+        if(isCaptureModeOn) Factory.captureImage();
         else {
-            isCapureModeOn = true;
+            isCaptureModeOn = true;
             Factory.beginCapture(userProfilePicture);
         }
     }
@@ -164,30 +204,29 @@ public class Controller implements Initializable {
 
             details.put(dateOfBirth.getId(), dateOfBirth.getValue().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
 
-
-
-            /////////////////////
+            /*
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
-            FileInputStream f  = new FileInputStream(getClass().getResource("pic2.jpg").getFile());
+            FileInputStream f  = new FileInputStream(getClass().getResource("default.jpg").getFile());
             ImageIO.write(ImageIO.read(f), "jpg", bos);
+             */
 
-            details.putAll(Map.of("fingerprint", "fingerprint",
+            details.putAll(Map.of(
+                    "fingerprint", "fingerprint",
                     "userID", "12345",
-                    "userProfilePicture", currentUserImageBytes,//bos.toByteArray(),//new String(new byte[]{2,3,12,23,44,34,2}),
+                    "userProfilePicture", currentUserImageBytes,//bos.toByteArray()
                     "profilePictureId", "24424343"));
-            //////////////////////
 
 
             //*@debug*/ details.forEach((s1, s2)-> System.out.println(s1 + " - " + s2));
             Factory.register(details);
 
         } catch(NullPointerException npe){
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Incomplete details");
-            //alert.setHeaderText("DateE");
-            //alert.setContentText("please fill the missing fields");
-            alert.showAndWait();
             System.out.println("incomplete details");
+            Platform.runLater(()->{
+                registrationPrompt.setText("incomplete details!");
+                registrationPrompt.setTextFill(Paint.valueOf("red"));
+            });
+            setHideView(registrationPrompt, hideViewTimeout);
         } catch(Exception e){
             e.printStackTrace();
         }

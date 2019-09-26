@@ -38,7 +38,7 @@ public class Factory{
 
     public interface EventListener{
         void onImageCaptured(byte[] image);
-        void onUserRegistered(String response);
+        void onRegister(String response);
         void onError();
     }
 
@@ -108,10 +108,55 @@ public class Factory{
     }
 
 
+
+    private static void _register(Map<String, Object> userDetails) throws java.io.IOException{
+        HttpURLConnection http = (HttpURLConnection) new URL(ELECTION_REG_API).openConnection();
+        http.setRequestMethod("POST");
+        http.setRequestProperty("User-Agent", "Mozilla/5.0");
+        http.setRequestProperty("Content-Type", "application/json");
+        http.setRequestProperty("x-access-token", x_access_token);
+
+        String boundary = "Prime'sBoundary";
+        http.setRequestProperty("Content-Type", "multipart/form-data; boundary=\""+boundary+"\"");
+        http.setDoOutput(true);
+
+        OutputStream out = http.getOutputStream();
+
+        MultipartForm mpf = new MultipartForm(boundary, out);
+        userDetails.forEach((k, v)-> {
+            try{
+                if(k.equals("userProfilePicture")) {
+                    mpf.addInputFile(k, (userDetails.get("userEmail")+".png"), (byte[])v);
+                }
+                else mpf.addInput(k, (String)v);
+            } catch(IOException ioe){ioe.printStackTrace();}
+        });
+        mpf.end();
+
+        final String[] response = {""};
+        if(http.getResponseCode() == HttpURLConnection.HTTP_OK){
+            response[0] = new String(new BufferedInputStream(http.getInputStream()).readAllBytes());
+            System.out.println("server response: "+response[0]);
+            response[0] = "Registration successful";
+        }
+        else if (http.getResponseCode() == HttpURLConnection.HTTP_BAD_REQUEST) //400
+            response[0] = "Email or Phone already exists";
+        else if(http.getResponseCode() == HttpURLConnection.HTTP_UNAUTHORIZED) //401
+            response[0] = "incomplete details";
+        else {
+            response[0] = Integer.toString(http.getResponseCode());
+            /*@debug*/System.out.println("response code: " + http.getResponseCode() + "; response msg: " + http.getResponseMessage());
+            response[0] = "Registration failed";
+        }
+        listeners.forEach(l -> l.onRegister(response[0]));
+    }
+
+
     private static void startThread(Thread task){
         task.start();
         threadList.add(task);
     }
+
 
     public static void setX_access_token(String x_access_token){
         Factory.x_access_token = x_access_token;
@@ -184,43 +229,6 @@ public class Factory{
         webcam.close();
 
         listeners.forEach(l->l.onImageCaptured(imageBytes));
-    }
-
-
-    private static void _register(Map<String, Object> userDetails) throws java.io.IOException{
-        HttpURLConnection http = (HttpURLConnection) new URL(ELECTION_REG_API).openConnection();
-        http.setRequestMethod("POST");
-        http.setRequestProperty("User-Agent", "Mozilla/5.0");
-        http.setRequestProperty("Content-Type", "application/json");
-        http.setRequestProperty("x-access-token", x_access_token);
-
-        String boundary = "Prime'sBoundary";
-        http.setRequestProperty("Content-Type", "multipart/form-data; boundary=\""+boundary+"\"");
-        http.setDoOutput(true);
-
-        OutputStream out = http.getOutputStream();
-
-        MultipartForm mpf = new MultipartForm(boundary, out);
-        userDetails.forEach((k, v)-> {
-            try{
-                if(k.equals("userProfilePicture")) {
-                    mpf.addInputFile(k, (userDetails.get("userEmail")+".png"), (byte[])v);
-                }
-                else mpf.addInput(k, (String)v);
-            } catch(IOException ioe){ioe.printStackTrace();}
-        });
-        mpf.end();
-
-        final String[] response = {""};
-        if(http.getResponseCode() == HttpURLConnection.HTTP_OK){
-            response[0] = new String(new BufferedInputStream(http.getInputStream()).readAllBytes());
-            listeners.forEach(l -> l.onUserRegistered(response[0]));
-        } else {
-            response[0] = Integer.toString(http.getResponseCode());
-            /*@debug*/System.out.println("response code: " + http.getResponseCode() + "; response msg: " + http.getResponseMessage());
-
-            listeners.forEach(l -> l.onUserRegistered("error"));
-        }
     }
 
 
