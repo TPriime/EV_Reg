@@ -4,6 +4,11 @@ module EV.Reg {
     requires java.sql;
     requires java.desktop;
     requires gson;
+    //requires webcam.capture;
+    requires javafx.swing;
+    //requires bridj;
+    //requires slf4j.api;
+    requires testcam;
 
-    exports com.prime.ev.register.gui;
+    opens com.prime.ev.register.gui;
 }

@@ -1,20 +1,32 @@
 package com.prime.ev.register;
 
-import java.io.BufferedInputStream;
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.Buffer;
+import java.nio.ByteBuffer;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import com.github.sarxos.webcam.Webcam;
+import com.github.sarxos.webcam.WebcamUtils;
 import com.prime.ev.register.gui.Main;
 import com.prime.net.forms.MultipartForm;
+import javafx.application.Platform;
+import javafx.embed.swing.SwingFXUtils;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+
 
 public class Factory{
     public static final String HOST = "http://127.0.0.1:8080";
+
+    private static Webcam webcam;
+    private static Thread imageViewThread;
+    private static long frequency = 60;
+    private static final List<Thread> threadList = new ArrayList<>();
 
     private static Main mainInstance;
     private static List<EventListener> listeners = new ArrayList<>();
@@ -25,7 +37,7 @@ public class Factory{
 
 
     public interface EventListener{
-        void onImageCaptured();
+        void onImageCaptured(byte[] image);
         void onUserRegistered(String response);
         void onError();
     }
@@ -41,6 +53,7 @@ public class Factory{
             e.printStackTrace();
             System.exit(1);
         }
+        webcam = Webcam.getDefault();
     }
 
 
@@ -95,6 +108,11 @@ public class Factory{
     }
 
 
+    private static void startThread(Thread task){
+        task.start();
+        threadList.add(task);
+    }
+
     public static void setX_access_token(String x_access_token){
         Factory.x_access_token = x_access_token;
     }
@@ -139,7 +157,37 @@ public class Factory{
     public static List<Factory.EventListener> getListeners(){ return listeners;}
 
 
-    public static void register(Map<String, Object> userDetails) throws java.io.IOException{
+    public static void beginCapture(ImageView imgView){
+        webcam.open();
+        final Image[] img = new Image[1];
+        imageViewThread = new Thread(()->{
+            while(true){
+                try {
+                    img[0] = SwingFXUtils.toFXImage(webcam.getImage(), null);
+                    Platform.runLater(()-> imgView.setImage(img[0]));
+                    Thread.sleep((1/frequency)*1000);
+                }
+                catch (NullPointerException npe){
+                    System.out.printf("%s : %s; webcam is probably null\n", npe.getClass().getName(), npe.getMessage());
+                    break;
+                }
+                catch (Exception e){e.printStackTrace();}
+            }
+        }, "BeginCaptureThread");
+        startThread(imageViewThread);
+    }
+
+
+    public static void captureImage(){
+        imageViewThread.interrupt();
+        byte[] imageBytes = WebcamUtils.getImageBytes(webcam, "jpg");
+        webcam.close();
+
+        listeners.forEach(l->l.onImageCaptured(imageBytes));
+    }
+
+
+    private static void _register(Map<String, Object> userDetails) throws java.io.IOException{
         HttpURLConnection http = (HttpURLConnection) new URL(ELECTION_REG_API).openConnection();
         http.setRequestMethod("POST");
         http.setRequestProperty("User-Agent", "Mozilla/5.0");
@@ -173,5 +221,18 @@ public class Factory{
 
             listeners.forEach(l -> l.onUserRegistered("error"));
         }
+    }
+
+
+    public static void register(Map<String, Object> userDetails){
+        Thread registerThread = new Thread(()->{
+           try{ _register(userDetails); } catch(IOException ioe){ioe.printStackTrace();}
+        }, "RegisterThread");
+        startThread(registerThread);
+    }
+
+
+    public static void killThreads(){
+        threadList.forEach(Thread::interrupt);
     }
 }

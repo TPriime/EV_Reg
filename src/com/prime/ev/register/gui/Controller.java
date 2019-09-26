@@ -1,6 +1,8 @@
 package com.prime.ev.register.gui;
 
+import com.github.sarxos.webcam.Webcam;
 import com.prime.ev.register.Factory;
+import javafx.application.Platform;
 import javafx.beans.Observable;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -20,10 +22,7 @@ import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
+import java.io.*;
 import java.net.URL;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -33,6 +32,8 @@ public class Controller implements Initializable {
     private ToggleGroup genderGroup = new ToggleGroup(), marriedStatusGroup = new ToggleGroup();
     private final int STATE = 0, LGA = 1, TOWN = 2;
     private Node parent;
+    private boolean isCapureModeOn = false;
+    private byte[] currentUserImageBytes;
 
     public TextField firstNameField, otherNamesField, lastNameField, userEmailField, phoneNumberField, occupationField;
     public RadioButton maleButton, femaleButton, singleButton, marriedButton;
@@ -63,8 +64,11 @@ public class Controller implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         Factory.EventListener listener = new Factory.EventListener() {
-            @Override public void onImageCaptured() {
-
+            @Override public void onImageCaptured(byte[] image) {
+                isCapureModeOn = false;
+                currentUserImageBytes = image;
+                Platform.runLater(()->
+                    userProfilePicture.setImage(new Image(new ByteArrayInputStream(image))));
             }
 
             @Override public void onUserRegistered(String response) {
@@ -135,6 +139,15 @@ public class Controller implements Initializable {
     }
 
 
+    public void capture() {
+        if(isCapureModeOn) Factory.captureImage();
+        else {
+            isCapureModeOn = true;
+            Factory.beginCapture(userProfilePicture);
+        }
+    }
+
+
     public void register(){
         parent = firstNameField.getScene().getRoot();
 
@@ -158,9 +171,9 @@ public class Controller implements Initializable {
             FileInputStream f  = new FileInputStream(getClass().getResource("pic2.jpg").getFile());
             ImageIO.write(ImageIO.read(f), "jpg", bos);
 
-            details.putAll(Map.of("fingerprint", "",
+            details.putAll(Map.of("fingerprint", "fingerprint",
                     "userID", "12345",
-                    "userProfilePicture", bos.toByteArray(),//new String(new byte[]{2,3,12,23,44,34,2}),
+                    "userProfilePicture", currentUserImageBytes,//bos.toByteArray(),//new String(new byte[]{2,3,12,23,44,34,2}),
                     "profilePictureId", "24424343"));
             //////////////////////
 

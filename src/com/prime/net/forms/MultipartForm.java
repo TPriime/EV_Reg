@@ -21,13 +21,12 @@ public class MultipartForm extends Form{
         sb.append(String.format("Content-Disposition: form-data; name=\"%s\"\r\n\r\n", name));
         sb.append(value).append("\r\n");
 
-        System.out.println(sb.toString());
         out.write(sb.toString().getBytes());
         this.sb.append(sb.toString());
     }
 
     public void addInputFile(String name, String fileName, byte[] bin) throws IOException{
-        StringBuilder sb =new StringBuilder();
+        StringBuilder sb = new StringBuilder();
         sb.append("--").append(boundary).append("\r\n");
         sb.append(String.format("Content-Disposition: form-data; name=\"%s\"; filename=\"%s\"\r\n\r\n", name, fileName));
 
@@ -35,6 +34,7 @@ public class MultipartForm extends Form{
         out.write(bin);
 
         sb.append(bin).append("\r\n");
+        out.write("\r\n".getBytes());
         this.sb.append(sb.toString());
     }
 

@@ -22,6 +22,10 @@ public class LoginController {
     public PasswordField passwordField;
 
     public void login() throws Exception{
+        loginSuccessful();
+
+        /*
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         HttpURLConnection http = (HttpURLConnection) new URL(loginURL).openConnection();
         http.setRequestMethod("POST");
         http.setRequestProperty("Content-Type", "application/json");
@@ -47,6 +51,7 @@ public class LoginController {
             System.out.println(http.getResponseCode());
             loginError();
         }
+        */
     }
 
 
