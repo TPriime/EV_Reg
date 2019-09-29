@@ -10,6 +10,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import com.github.sarxos.webcam.Webcam;
 import com.github.sarxos.webcam.WebcamUtils;
@@ -41,7 +42,6 @@ public class Factory{
 
     private static CardTerminal operatingCardReaderDevice;
     private static Card card;
-    private static String testData = "I am Prime"; /////////////////////////////////for test only
 
     public interface EventListener{
         void onImageCaptured(byte[] image);
@@ -177,11 +177,32 @@ public class Factory{
     }
 
 
-    private static boolean isNewCard(CardChannel channel) throws CardException{
+    private static boolean isNewCard(CardChannel channel) throws CardException, IOException{
         byte[] read_command = new byte[]{(byte)0xFF, (byte)0xB0, (byte)0x01, (byte)0x04, (byte)0x0A};
         ResponseAPDU response = channel.transmit(new CommandAPDU(read_command));
+        /*
+        HttpURLConnection http = (HttpURLConnection) new URL("").openConnection();
+        http.setRequestMethod("GET");
+        http.setRequestProperty("User-Agent", "Mozilla/5.0");
+        if(http.getResponseCode() == HttpURLConnection.HTTP_OK){
+            byte[] serverResponse = new BufferedInputStream(http.getInputStream()).readAllBytes();
+            //return true or false
+        } else {
+            throw new IOException("server error - couldn't verify card");
+        }
+         */
+        String testData = "I am Primc";
         if(new String(response.getData()).equals(testData)) return false;
         else return true;
+    }
+
+
+
+    private static byte[] generateCardId(){
+        byte[] cardID = new byte[20];
+        new Random().nextBytes(cardID);
+
+        return (new String(cardID)+"I am Prime").getBytes();
     }
 
 
@@ -195,8 +216,8 @@ public class Factory{
         ResponseAPDU response = channel.transmit(new CommandAPDU(verify_command));
         if(!(response.getSW1()==144 && response.getSW2()==255)) throw new CardException("Verify Error");
 
-        byte[] write_command = {(byte)0xFF, (byte)0xD0, (byte)0x01, (byte)0x04, (byte)0x0A};
-        byte[] commandData = testData.getBytes();
+        byte[] commandData = generateCardId();
+        byte[] write_command = {(byte)0xFF, (byte)0xD0, (byte)0x01, (byte)0x04, (byte)commandData.length};
         byte[] t = new byte[write_command.length + commandData.length];
         for (int i = 0; i < t.length; i++)
             if(i<write_command.length) t[i] = write_command[i];
@@ -205,7 +226,7 @@ public class Factory{
         if(!(response.getSW1()==144 && response.getSW2()==0)) throw new CardException("Write Error");
 
         //card.disconnect(false);
-        return testData;
+        return new String(commandData);
     }
 
 
