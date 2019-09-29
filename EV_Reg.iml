@@ -12,5 +12,6 @@
     <orderEntry type="library" name="gson-2.2.2" level="project" />
     <orderEntry type="library" name="sqlite-jdbc-3.27.2.1" level="project" />
     <orderEntry type="library" name="webcam" level="project" />
+    <orderEntry type="library" name="PCardReader" level="project" />
   </component>
 </module>

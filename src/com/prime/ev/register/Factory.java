@@ -5,6 +5,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
+import java.nio.channels.Channel;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,10 +15,13 @@ import com.github.sarxos.webcam.Webcam;
 import com.github.sarxos.webcam.WebcamUtils;
 import com.prime.ev.register.gui.Main;
 import com.prime.net.forms.MultipartForm;
+import com.prime.util.cardio.CardIO;
 import javafx.application.Platform;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+
+import javax.smartcardio.*;
 
 
 public class Factory{
@@ -35,11 +39,16 @@ public class Factory{
     private static Connection conn;
     private static String x_access_token = "";//"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7ImlkIjoiNWQ1ZTY0NjQzODdjODI3MmViNDdhNmEzIn0sImlhdCI6MTU2NjQ2NzI4NSwiZXhwIjoxNTY5MDU5Mjg1fQ.JNw0G7mcOHB1EJdEGfu8mdrrW-6-41SnloIy2sXWbPA";
 
+    private static CardTerminal operatingCardReaderDevice;
+    private static Card card;
+    private static String testData = "I am Prime"; /////////////////////////////////for test only
 
     public interface EventListener{
         void onImageCaptured(byte[] image);
         void onRegister(String response);
-        void onError();
+        void onError(Exception e);
+        void onDeviceDetected();
+        void onDeviceDetached();
     }
 
 
@@ -48,6 +57,7 @@ public class Factory{
         try{
             createDBConnection();
             initializeDB();
+            initializeCardReaderInterface();
         } catch(Exception e){
             System.out.println(e.getClass().getName()+": "+e.getMessage());
             e.printStackTrace();
@@ -108,8 +118,100 @@ public class Factory{
     }
 
 
+    private static void initializeCardReaderInterface(){
+        CardIO.getInstance().addListener(new CardIO.ICardListener() {
+            @Override
+            public void onCardInserted(CardTerminal cardTerminal) {
+                Factory.onCardInserted(cardTerminal);
+            }
 
-    private static void _register(Map<String, Object> userDetails) throws java.io.IOException{
+            @Override
+            public void onCardEjected(CardTerminal cardTerminal) {
+                Factory.onCardEjected(cardTerminal);
+            }
+
+            @Override
+            public void onDeviceDetected(List<CardTerminal> list) {
+                Factory.onDeviceDetected(list);
+            }
+
+            @Override
+            public void onDeviceDetached(CardTerminal cardTerminal) {
+                Factory.onDeviceDetached(cardTerminal);
+            }
+        });
+    }
+
+
+    private  static void onDeviceDetected(List<CardTerminal> cardTerminals) {
+        if(operatingCardReaderDevice != null) return;
+        operatingCardReaderDevice = cardTerminals.get(0);
+        listeners.forEach(l->l.onDeviceDetected());
+        System.out.println("device connected");
+    }
+
+
+    private static void onDeviceDetached(CardTerminal cardTerminal) {
+        if(cardTerminal != operatingCardReaderDevice) return;
+        operatingCardReaderDevice = null;
+        listeners.forEach(l->l.onDeviceDetached());
+        System.out.println("device detached");
+    }
+
+
+    private static void onCardInserted(CardTerminal cardTerminal){
+        try{
+            if(cardTerminal == operatingCardReaderDevice) {
+                card = cardTerminal.connect("*");
+                System.out.println("card connected");
+            }
+        } catch(CardException ce){ce.printStackTrace();}
+    }
+
+
+    private static void onCardEjected(CardTerminal cardTerminal) {
+        if(cardTerminal == operatingCardReaderDevice) {
+            card = null;
+            System.out.println("card connected");
+        }
+    }
+
+
+    private static boolean isNewCard(CardChannel channel) throws CardException{
+        byte[] read_command = new byte[]{(byte)0xFF, (byte)0xB0, (byte)0x01, (byte)0x04, (byte)0x0A};
+        ResponseAPDU response = channel.transmit(new CommandAPDU(read_command));
+        if(new String(response.getData()).equals(testData)) return false;
+        else return true;
+    }
+
+
+    private static String writeToCard()throws IOException, CardException{
+        if(card == null) throw new IOException("no card present");
+
+        CardChannel channel = card.getBasicChannel();
+        if(!isNewCard(channel))  throw new CardException("Card has been used");
+
+        byte[] verify_command = {(byte)0xFF, (byte)0x20, (byte)0x00, (byte)0x00, (byte)0x02, (byte)0xFF, (byte)0xFF};
+        ResponseAPDU response = channel.transmit(new CommandAPDU(verify_command));
+        if(!(response.getSW1()==144 && response.getSW2()==255)) throw new CardException("Verify Error");
+
+        byte[] write_command = {(byte)0xFF, (byte)0xD0, (byte)0x01, (byte)0x04, (byte)0x0A};
+        byte[] commandData = testData.getBytes();
+        byte[] t = new byte[write_command.length + commandData.length];
+        for (int i = 0; i < t.length; i++)
+            if(i<write_command.length) t[i] = write_command[i];
+
+        response = channel.transmit(new CommandAPDU(write_command));
+        if(!(response.getSW1()==144 && response.getSW2()==0)) throw new CardException("Write Error");
+
+        //card.disconnect(false);
+        return testData;
+    }
+
+
+    private static void _register(Map<String, Object> userDetails) throws java.io.IOException, CardException{
+        userDetails.put("cardID", writeToCard()); //add cardID
+
         HttpURLConnection http = (HttpURLConnection) new URL(ELECTION_REG_API).openConnection();
         http.setRequestMethod("POST");
         http.setRequestProperty("User-Agent", "Mozilla/5.0");
@@ -234,7 +336,9 @@ public class Factory{
 
     public static void register(Map<String, Object> userDetails){
         Thread registerThread = new Thread(()->{
-           try{ _register(userDetails); } catch(IOException ioe){ioe.printStackTrace();}
+           try{ _register(userDetails); }
+           catch(CardException ce){ listeners.forEach(l->l.onError(ce)); }
+           catch(IOException ioe){ listeners.forEach(l->l.onError(ioe));}
         }, "RegisterThread");
         startThread(registerThread);
     }

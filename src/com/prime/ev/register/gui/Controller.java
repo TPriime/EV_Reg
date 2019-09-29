@@ -78,7 +78,17 @@ public class Controller implements Initializable {
                 else registrationFailed(response);
             }
 
-            @Override public void onError() {
+            @Override public void onError(Exception e) {
+                System.out.println(e.getClass().getSimpleName() +": "+e.getMessage());
+            }
+
+            @Override
+            public void onDeviceDetected() {
+
+            }
+
+            @Override
+            public void onDeviceDetached() {
 
             }
         };
@@ -157,6 +167,7 @@ public class Controller implements Initializable {
         setHideView(registrationPrompt,  hideViewTimeout);
     }
 
+
     private void userRegistered(String response) {
         System.out.println(response);
         Platform.runLater(()->{
@@ -164,7 +175,7 @@ public class Controller implements Initializable {
             registrationPrompt.setTextFill(Paint.valueOf("green"));
         });
         setHideView(registrationPrompt, hideViewTimeout);
-        reset();
+        //reset();             //////////////////////////////////////////////////////////////////////////////////
     }
 
 

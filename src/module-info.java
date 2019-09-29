@@ -6,6 +6,8 @@ module EV.Reg {
     requires gson;
     requires javafx.swing;
     requires webcam;
+    requires PCardReader;
+    requires java.smartcardio;
 
     opens com.prime.ev.register.gui;
 }
