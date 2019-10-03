@@ -28,6 +28,7 @@ import java.net.URL;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Controller implements Initializable {
     private Map<String, Object> details = new HashMap<>();
@@ -36,7 +37,7 @@ public class Controller implements Initializable {
     private Node parent;
     private boolean isCaptureModeOn = false;
     private byte[] currentUserImageBytes;
-    private final long hideViewTimeout = 3000;
+    private final long hideViewTimeout = Factory.promptTimeout;
     private final LocalDate defaultDate = LocalDate.of(1960, 10, 1);
     private final Image defaultImage = new Image(getClass().getResource("default.jpg").toExternalForm());
 
@@ -80,6 +81,11 @@ public class Controller implements Initializable {
 
             @Override public void onError(Exception e) {
                 System.out.println(e.getClass().getSimpleName() +": "+e.getMessage());
+                Platform.runLater(()->{
+                    registrationPrompt.setText(e.getMessage());
+                    registrationPrompt.setTextFill(Paint.valueOf("red"));
+                });
+                setHideView(registrationPrompt, hideViewTimeout);
             }
 
             @Override
@@ -190,6 +196,15 @@ public class Controller implements Initializable {
     }
 
 
+    private List<String> gatherFingerprints(){
+        return maleButton.getScene().getRoot().lookupAll("ImageView").stream()
+                .map(node->node.getId())
+                .filter(s -> s!=null)
+                .filter(s->!(s.equals("currentFingerprintImage")||s.equals("userProfilePicture")))
+                .collect(Collectors.toList());
+    }
+
+
     public void capture() {
         if(isCaptureModeOn) Factory.captureImage();
         else {
@@ -221,8 +236,9 @@ public class Controller implements Initializable {
             ImageIO.write(ImageIO.read(f), "jpg", bos);
              */
 
+
             details.putAll(Map.of(
-                    "fingerprint", "fingerprint",
+                    "fingerprint", gatherFingerprints().toString(),//"fingerprint",
                     "userID", "12345",
                     "userProfilePicture", currentUserImageBytes,//bos.toByteArray()
                     "profilePictureId", "24424343"));

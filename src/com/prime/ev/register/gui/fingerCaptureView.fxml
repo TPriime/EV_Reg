@@ -1,10 +1,93 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/8.0.999-ea" xmlns:fx="http://javafx.com/fxml/1">
+<VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" spacing="15.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.prime.ev.register.gui.FingerCaptureController">
    <children>
-      <HBox prefHeight="100.0" prefWidth="200.0" />
+      <HBox prefHeight="100.0" prefWidth="200.0" spacing="50.0">
+         <children>
+            <HBox prefHeight="100.0" prefWidth="200.0" spacing="10.0">
+               <children>
+                  <ImageView fx:id="Thumb_1Left2" fitHeight="60.0" fitWidth="60.0" opacity="0.4" pickOnBounds="true">
+                     <image>
+                        <Image url="@default_fp.jpg" />
+                     </image>
+                  </ImageView>
+                  <ImageView fx:id="Index_1Left2" fitHeight="60.0" fitWidth="60.0" opacity="0.4" pickOnBounds="true">
+                     <image>
+                        <Image url="@default_fp.jpg" />
+                     </image>
+                  </ImageView>
+                  <ImageView fx:id="Middle_1Left2" fitHeight="60.0" fitWidth="60.0" opacity="0.4" pickOnBounds="true">
+                     <image>
+                        <Image url="@default_fp.jpg" />
+                     </image>
+                  </ImageView>
+                  <ImageView fx:id="Ring_1Left2" fitHeight="60.0" fitWidth="60.0" opacity="0.4" pickOnBounds="true">
+                     <image>
+                        <Image url="@default_fp.jpg" />
+                     </image>
+                  </ImageView>
+                  <ImageView fx:id="Pinky_1Left2" fitHeight="60.0" fitWidth="60.0" opacity="0.4" pickOnBounds="true">
+                     <image>
+                        <Image url="@default_fp.jpg" />
+                     </image>
+                  </ImageView>
+               </children>
+            </HBox>
+            <HBox prefHeight="100.0" prefWidth="200.0" spacing="10.0">
+               <children>
+                  <ImageView fx:id="Thumb_1Right2" fitHeight="60.0" fitWidth="60.0" opacity="0.4" pickOnBounds="true">
+                     <image>
+                        <Image url="@default_fp.jpg" />
+                     </image>
+                  </ImageView>
+                  <ImageView fx:id="Index_1Right2" fitHeight="60.0" fitWidth="60.0" opacity="0.4" pickOnBounds="true">
+                     <image>
+                        <Image url="@default_fp.jpg" />
+                     </image>
+                  </ImageView>
+                  <ImageView fx:id="Middle_1Right2" fitHeight="60.0" fitWidth="60.0" opacity="0.4" pickOnBounds="true">
+                     <image>
+                        <Image url="@default_fp.jpg" />
+                     </image>
+                  </ImageView>
+                  <ImageView fx:id="Ring_1Right2" fitHeight="60.0" fitWidth="60.0" opacity="0.4" pickOnBounds="true">
+                     <image>
+                        <Image url="@default_fp.jpg" />
+                     </image>
+                  </ImageView>
+                  <ImageView fx:id="Pinky_1Right2" fitHeight="60.0" fitWidth="60.0" opacity="0.4" pickOnBounds="true">
+                     <image>
+                        <Image url="@default_fp.jpg" />
+                     </image>
+                  </ImageView>
+               </children>
+            </HBox>
+         </children>
+      </HBox>
+      <HBox alignment="CENTER">
+         <children>
+            <VBox alignment="CENTER" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="140.0">
+               <children>
+                  <ImageView fx:id="currentFingerprintImage" fitHeight="100.0" fitWidth="100.0" pickOnBounds="true">
+                     <image>
+                        <Image url="@default_fp.jpg" />
+                     </image>
+                  </ImageView>
+                  <Label fx:id="fingerLabel" text="Click on a finger" />
+               </children>
+            </VBox>
+            <Button fx:id="captureButton" mnemonicParsing="false" onAction="#capture" text="Capture" />
+         </children>
+      </HBox>
    </children>
 </VBox>

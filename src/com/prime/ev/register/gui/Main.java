@@ -8,6 +8,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+import javax.xml.stream.FactoryConfigurationError;
 import java.io.IOException;
 
 
@@ -37,7 +38,11 @@ public class Main extends Application {
         root.getStylesheets().add(getClass().getResource("reg-style.css").toExternalForm());
         primaryStage.setTitle("Register");
         primaryStage.setScene(new Scene(root));
+
+        primaryStage.setX(-5);
+        primaryStage.setY(0);
     }
+
 
     public static void main(String[] args) {
         launch(args);

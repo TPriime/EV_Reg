@@ -19,6 +19,7 @@ import com.prime.net.forms.MultipartForm;
 import com.prime.util.cardio.CardIO;
 import javafx.application.Platform;
 import javafx.embed.swing.SwingFXUtils;
+import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
@@ -38,10 +39,14 @@ public class Factory{
     private static String ELECTION_REG_API = HOST + "/evoting_api/v1/users/register";
     //private static String ELECTION_REG_API = "http://127.0.0.1:8080";
     private static Connection conn;
-    private static String x_access_token = "";//"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7ImlkIjoiNWQ1ZTY0NjQzODdjODI3MmViNDdhNmEzIn0sImlhdCI6MTU2NjQ2NzI4NSwiZXhwIjoxNTY5MDU5Mjg1fQ.JNw0G7mcOHB1EJdEGfu8mdrrW-6-41SnloIy2sXWbPA";
-
+    private static String x_access_token = "";
     private static CardTerminal operatingCardReaderDevice;
     private static Card card;
+
+
+    //private static List<String> fingerprints = new ArrayList<>();
+
+    public static long promptTimeout = 5000;
 
     public interface EventListener{
         void onImageCaptured(byte[] image);
@@ -172,7 +177,7 @@ public class Factory{
     private static void onCardEjected(CardTerminal cardTerminal) {
         if(cardTerminal == operatingCardReaderDevice) {
             card = null;
-            System.out.println("card connected");
+            System.out.println("card disconnected");
         }
     }
 
@@ -354,6 +359,19 @@ public class Factory{
         listeners.forEach(l->l.onImageCaptured(imageBytes));
     }
 
+
+    public static Map<String, Object> captureFingerprint(){
+        String fingerprintHash = "d123f2e323a";
+        return Map.of("fingerprint", fingerprintHash,
+                "fingerprintImage", new Image(Factory.class.getResource("default_fp.jpg").toExternalForm()));
+    }
+
+    /*
+    public static List<String> getFingerprints(){ return fingerprints; }
+
+
+    public static void clearFingerprints
+*/
 
     public static void register(Map<String, Object> userDetails){
         Thread registerThread = new Thread(()->{
