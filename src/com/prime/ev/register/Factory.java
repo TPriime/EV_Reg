@@ -197,9 +197,16 @@ public class Factory{
 
     private static byte[] generateCardId(){
         byte[] cardID = new byte[20];
-        new Random().nextBytes(cardID);
 
-        return (new String(cardID)+"I am Prime").getBytes();
+        Random rand = new Random();
+        for(int i=0; i<cardID.length; i++)
+            cardID[i] = (byte)rand.nextInt(10);
+
+        return Arrays.toString(cardID).replace("[","")
+                .replace("]","")
+                .replace(" ","")
+                .replace(",","")
+                .getBytes();
     }
 
 
