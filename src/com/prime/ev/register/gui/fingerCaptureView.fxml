@@ -16,17 +16,7 @@
          <children>
             <HBox prefHeight="100.0" prefWidth="200.0" spacing="10.0">
                <children>
-                  <ImageView fx:id="Thumb_1Left2" fitHeight="60.0" fitWidth="60.0" opacity="0.4" pickOnBounds="true">
-                     <image>
-                        <Image url="@default_fp.jpg" />
-                     </image>
-                  </ImageView>
-                  <ImageView fx:id="Index_1Left2" fitHeight="60.0" fitWidth="60.0" opacity="0.4" pickOnBounds="true">
-                     <image>
-                        <Image url="@default_fp.jpg" />
-                     </image>
-                  </ImageView>
-                  <ImageView fx:id="Middle_1Left2" fitHeight="60.0" fitWidth="60.0" opacity="0.4" pickOnBounds="true">
+                  <ImageView fx:id="Pinky_1Left2" fitHeight="60.0" fitWidth="60.0" opacity="0.4" pickOnBounds="true">
                      <image>
                         <Image url="@default_fp.jpg" />
                      </image>
@@ -36,7 +26,17 @@
                         <Image url="@default_fp.jpg" />
                      </image>
                   </ImageView>
-                  <ImageView fx:id="Pinky_1Left2" fitHeight="60.0" fitWidth="60.0" opacity="0.4" pickOnBounds="true">
+                  <ImageView fx:id="Middle_1Left2" fitHeight="60.0" fitWidth="60.0" opacity="0.4" pickOnBounds="true">
+                     <image>
+                        <Image url="@default_fp.jpg" />
+                     </image>
+                  </ImageView>
+                  <ImageView fx:id="Index_1Left2" fitHeight="60.0" fitWidth="60.0" opacity="0.4" pickOnBounds="true">
+                     <image>
+                        <Image url="@default_fp.jpg" />
+                     </image>
+                  </ImageView>
+                  <ImageView fx:id="Thumb_1Left2" fitHeight="60.0" fitWidth="60.0" opacity="0.4" pickOnBounds="true">
                      <image>
                         <Image url="@default_fp.jpg" />
                      </image>

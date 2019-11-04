@@ -36,11 +36,17 @@ public class Main extends Application {
     public void setRegistrationScene() throws IOException {
         Parent root = FXMLLoader.load(getClass().getResource("view.fxml"));
         root.getStylesheets().add(getClass().getResource("reg-style.css").toExternalForm());
-        primaryStage.setTitle("Register");
-        primaryStage.setScene(new Scene(root));
 
-        primaryStage.setX(-5);
-        primaryStage.setY(0);
+        Stage registrationStage = new Stage();
+        registrationStage.setTitle("Register");
+        registrationStage.setScene(new Scene(root));
+
+        //registrationStage.setX(-5);
+        //registrationStage.setY(0);
+
+        registrationStage.setMaximized(true);
+        registrationStage.show();
+        primaryStage.close();
     }
 
 

@@ -74,6 +74,8 @@ public class Controller implements Initializable {
                 imageCaptured(image);
             }
 
+            @Override public void onFingerprintCaptured(Map<String, Object> fingerprintMap) { }
+
             @Override public void onRegister(String response) {
                 if(response.equalsIgnoreCase("Registration successful")) userRegistered(response);
                 else registrationFailed(response);
@@ -198,9 +200,10 @@ public class Controller implements Initializable {
 
     private List<String> gatherFingerprints(){
         return maleButton.getScene().getRoot().lookupAll("ImageView").stream()
-                .map(node->node.getId())
+                .map(node-> node.getId())
                 .filter(s -> s!=null)
-                .filter(s->!(s.equals("currentFingerprintImage")||s.equals("userProfilePicture")))
+                .filter(s-> !(s.equals("currentFingerprintImage")||s.equals("userProfilePicture")))
+                .filter(s-> s.startsWith("["))
                 .collect(Collectors.toList());
     }
 

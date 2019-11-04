@@ -3,14 +3,8 @@ package com.prime.ev.register;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.nio.Buffer;
-import java.nio.ByteBuffer;
-import java.nio.channels.Channel;
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 import com.github.sarxos.webcam.Webcam;
 import com.github.sarxos.webcam.WebcamUtils;
@@ -19,7 +13,6 @@ import com.prime.net.forms.MultipartForm;
 import com.prime.util.cardio.CardIO;
 import javafx.application.Platform;
 import javafx.embed.swing.SwingFXUtils;
-import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
@@ -44,18 +37,17 @@ public class Factory{
     private static Card card;
 
 
-    //private static List<String> fingerprints = new ArrayList<>();
 
     public static long promptTimeout = 5000;
 
     public interface EventListener{
         void onImageCaptured(byte[] image);
+        void onFingerprintCaptured(Map<String, Object> fingerprintMap);
         void onRegister(String response);
         void onError(Exception e);
         void onDeviceDetected();
         void onDeviceDetached();
     }
-
 
 
     static {
@@ -238,6 +230,8 @@ public class Factory{
     private static void _register(Map<String, Object> userDetails) throws java.io.IOException, CardException{
         userDetails.put("cardID", writeToCard()); //add cardID
 
+        /*@debug*/userDetails.forEach((s, o)->System.out.printf("%s: %s\n", s, o));////////////////////////////////////////////////////////
+
         HttpURLConnection http = (HttpURLConnection) new URL(ELECTION_REG_API).openConnection();
         http.setRequestMethod("POST");
         http.setRequestProperty("User-Agent", "Mozilla/5.0");
@@ -360,10 +354,30 @@ public class Factory{
     }
 
 
-    public static Map<String, Object> captureFingerprint(){
-        String fingerprintHash = "d123f2e323a";
-        return Map.of("fingerprint", fingerprintHash,
+    private static Map<String, Object> _captureFingerprint() throws IOException{
+        //String fingerprintHash = "d123f2e323a";////////////////////////////////////////////////
+        Process process = Runtime.getRuntime().exec("fingerprint.exe");
+        BufferedInputStream buff  = new BufferedInputStream(process.getInputStream());
+        String fingerCharacteristics = new String(buff.readAllBytes());
+        if(fingerCharacteristics.equals("-1")) throw new IOException("no fingerprint reader!");
+        else if(fingerCharacteristics.equals("-2")) throw new IOException("retry finger");
+
+        //*@debug*/System.out.println("characteristics: " + fingerCharacteristics);
+
+        return Map.of("fingerprint", fingerCharacteristics,
                 "fingerprintImage", new Image(Factory.class.getResource("default_fp.jpg").toExternalForm()));
+    }
+
+
+    public static void captureFingerprint() {
+        new Thread(()->{
+            try {
+                Map<String, Object> fingerprintMap = _captureFingerprint();
+                listeners.forEach(l -> l.onFingerprintCaptured(fingerprintMap));
+            }catch(Exception e){
+                listeners.forEach(l->l.onError(e)); //listeners should handle exceptions
+            }
+        }).start();
     }
 
     /*
